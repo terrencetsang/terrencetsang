@@ -19,6 +19,8 @@
 import { defineComponent, reactive, toRefs } from "vue";
 import { InitData } from "../types/login";
 import { FormInstance } from "element-plus";
+import { login } from "../http/api"
+import { ElMessage } from 'element-plus'
 
 export default defineComponent({
   setup() {
@@ -46,7 +48,13 @@ export default defineComponent({
     const submitForm = (loginFormRef: FormInstance) => {
       loginFormRef.validate((valid: boolean) => {
         if (valid) {
-          alert("验证通过!");
+          login(data.loginForm).then((res: any) => {
+            ElMessage({
+              message: res.msg || '登录成功',
+              type: 'success',
+            })
+
+          })
         }
       });
     };
