@@ -19,7 +19,7 @@
           <el-menu
             router
             active-text-color="#ffd04b"
-            background-color="#545c64"
+            background-color="#6e757c"
             class="el-menu-vertical-demo"
             default-active="1"
             text-color="#fff"

@@ -41,44 +41,66 @@ export default defineComponent({
     const currentPage = ref(1);
     const pageSize = ref(10);
     onMounted(() => {
-      initList()
+      initList();
     });
     const initList = () => {
       const { page } = data.selectData;
       getList(page).then((res) => {
-        data.souList = res.data
+        data.souList = res.data;
         data.selectData.count = res.data.length;
-        handleCurrentChange(1)
+        handleCurrentChange(1);
       });
-    }
+    };
     const handleCurrentChange = (curPage: number) => {
-      data.selectData.page = curPage
-      currentPage.value = curPage      
-      const list:any = data.souList.slice((curPage-1) * pageSize.value, pageSize.value*curPage)
-      data.list=list
+      data.selectData.page = curPage;
+      currentPage.value = curPage;
+      const list: any = data.souList.slice(
+        (curPage - 1) * pageSize.value,
+        pageSize.value * curPage
+      );
+      data.list = list;
     };
     const handleSizeChange = (sizeTotal: number) => {
-      pageSize.value = sizeTotal
-      data.selectData.count = sizeTotal
-      data.list = data.souList.slice((currentPage.value-1) * sizeTotal, sizeTotal * currentPage.value);
+      pageSize.value = sizeTotal;
+      data.selectData.count = sizeTotal;
+      data.list = data.souList.slice(
+        (currentPage.value - 1) * sizeTotal,
+        sizeTotal * currentPage.value
+      );
     };
-    const initSelect = (arr:any) => {
+    const initSelect = (arr: any) => {
       currentPage.value = 1;
       pageSize.value = 10;
-      return arr.slice((currentPage.value-1) * pageSize.value, pageSize.value*currentPage.value)
-    }
+      return arr.slice(
+        (currentPage.value - 1) * pageSize.value,
+        pageSize.value * currentPage.value
+      );
+    };
     const onSubmit = () => {
-      let arr:ListInt[] = []
-      if (data.selectData.title) {
-        data.souList = initSelect(data.souList.filter(v => v.title.indexOf(data.selectData.title) != -1))
-        arr = data.souList
+      let arr: ListInt[] = [];
+      if (data.selectData.title || data.selectData.body) {
+        if (data.selectData.title) {
+          data.souList = initSelect(
+            data.souList.filter(
+              (v) => v.title.indexOf(data.selectData.title) != -1
+            )
+          );
+          arr = data.souList;
+        }
+        if (data.selectData.body) {
+          data.souList = initSelect(
+            data.souList.filter(
+              (v) => v.body.indexOf(data.selectData.body) != -1
+            )
+          );
+          arr = data.souList;
+        }
       } else {
-        initList()
-        arr = data.souList
+        initList();
+        arr = data.souList;
       }
-      data.list = arr
-      
-    }
+      data.list = arr;
+    };
     return {
       ...toRefs(data),
       currentPage,
