@@ -23,7 +23,7 @@
       v-model:page-size="pageSize"
       :page-sizes="[10, 20, 50, 100]"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="400"
+      :total="souList.length"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, reactive, toRefs, ref } from "vue";
-import { InitData, ListInt } from "../types/order";
+import { InitData } from "../types/order";
 import { getList } from "../http/api";
 
 export default defineComponent({
@@ -44,30 +44,28 @@ export default defineComponent({
     onMounted(() => {
       const { page } = data.selectData;
       getList(page).then((res) => {
-        console.log(res);
-        souList.value = res.data;
+        souList.value = res.data
         data.selectData.count = res.data.length;
-        handleSizeChange(10);
+        handleCurrentChange(1)
       });
     });
-    const handleCurrentChange = (pageTotal: number) => {
-      data.selectData.page = pageTotal;
+    const handleCurrentChange = (curPage: number) => {
+      data.selectData.page = curPage
+      currentPage.value = curPage      
+      const list:any = souList.value.slice((curPage-1) * pageSize.value, pageSize.value*curPage)
+      data.list=list
     };
-    const sliceList = (arr: ListInt[]) => {
-      for (let index = 0; index < arr.length; index += 10) {
-        let list: any = arr.slice(index, (index += 10));
-        data.list.push(list);
-      }
-    };
-    const handleSizeChange = (curSize: number) => {
-      data.list = souList.value.slice(0, curSize);
+    const handleSizeChange = (sizeTotal: number) => {
+      pageSize.value = sizeTotal
+      data.list = souList.value.slice((currentPage.value-1) * sizeTotal, sizeTotal);
+      console.log(data.list);
+      
     };
     return {
       ...toRefs(data),
       currentPage,
       pageSize,
       souList,
-      sliceList,
       handleCurrentChange,
       handleSizeChange,
     };
