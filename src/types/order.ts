@@ -19,5 +19,5 @@ export class InitData {
     page: 0,
     count: 0
   }
-  list: ListInt[] = []
+  list: [ListInt][] = []
 }
