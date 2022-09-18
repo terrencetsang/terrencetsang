@@ -58,8 +58,6 @@ export default defineComponent({
     const handleSizeChange = (sizeTotal: number) => {
       pageSize.value = sizeTotal
       data.list = souList.value.slice((currentPage.value-1) * sizeTotal, sizeTotal);
-      console.log(data.list);
-      
     };
     return {
       ...toRefs(data),
