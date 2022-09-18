@@ -21,10 +21,12 @@ import { InitData } from "../types/login";
 import { FormInstance } from "element-plus";
 import { login } from "../http/api"
 import { ElMessage } from 'element-plus'
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   setup() {
     const data = reactive(new InitData());
+    const router = useRouter()
     const rules = {
       userName: [
         { required: true, message: "请输入账号", trigger: "blur" },
@@ -53,7 +55,8 @@ export default defineComponent({
               message: res.msg || '登录成功',
               type: 'success',
             })
-
+            localStorage.setItem('token', res.data.token)
+            router.push('/home')
           })
         }
       });

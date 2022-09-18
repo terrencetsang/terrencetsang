@@ -2,10 +2,34 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
 const routes: Array<RouteRecordRaw> = [
+  // {
+  //   path: '/',
+  //   redirect: '/login'
+  // },
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: HomeView,
+    children: [
+      {
+        path: 'order',
+        name: 'order',
+        meta: {
+          isShow: true,
+          title: '订单列表'
+        },
+        component: () => import(/* webpackChunkName: "order" */ '../views/OrderView.vue')
+      },
+      {
+        path: 'userList',
+        name: 'userList',
+        meta: {
+          isShow: true,
+          title: '用户列表'
+        },
+        component: () => import(/* webpackChunkName: "userList" */ '../views/UserView.vue')
+      }
+    ]
   },
   {
     path: '/about',
