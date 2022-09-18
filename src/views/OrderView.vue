@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, reactive, toRefs, ref } from "vue";
-import { InitData } from "../types/order";
+import { InitData, ListInt } from "../types/order";
 import { getList } from "../http/api";
 
 export default defineComponent({
@@ -40,30 +40,52 @@ export default defineComponent({
     const data = reactive(new InitData());
     const currentPage = ref(1);
     const pageSize = ref(10);
-    const souList = ref([]);
     onMounted(() => {
+      initList()
+    });
+    const initList = () => {
       const { page } = data.selectData;
       getList(page).then((res) => {
-        souList.value = res.data
+        data.souList = res.data
         data.selectData.count = res.data.length;
         handleCurrentChange(1)
       });
-    });
+    }
     const handleCurrentChange = (curPage: number) => {
       data.selectData.page = curPage
       currentPage.value = curPage      
-      const list:any = souList.value.slice((curPage-1) * pageSize.value, pageSize.value*curPage)
+      const list:any = data.souList.slice((curPage-1) * pageSize.value, pageSize.value*curPage)
       data.list=list
     };
     const handleSizeChange = (sizeTotal: number) => {
       pageSize.value = sizeTotal
-      data.list = souList.value.slice((currentPage.value-1) * sizeTotal, sizeTotal);
+      data.selectData.count = sizeTotal
+      data.list = data.souList.slice((currentPage.value-1) * sizeTotal, sizeTotal * currentPage.value);
     };
+    const initSelect = (arr:any) => {
+      currentPage.value = 1;
+      pageSize.value = 10;
+      return arr.slice((currentPage.value-1) * pageSize.value, pageSize.value*currentPage.value)
+    }
+    const onSubmit = () => {
+      let arr:ListInt[] = []
+      if (data.selectData.title) {
+        data.souList = initSelect(data.souList.filter(v => v.title.indexOf(data.selectData.title) != -1))
+        arr = data.souList
+      } else {
+        initList()
+        arr = data.souList
+      }
+      data.list = arr
+      
+    }
     return {
       ...toRefs(data),
       currentPage,
       pageSize,
-      souList,
+      onSubmit,
+      initSelect,
+      initList,
       handleCurrentChange,
       handleSizeChange,
     };
